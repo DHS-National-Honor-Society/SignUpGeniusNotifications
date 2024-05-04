@@ -23,6 +23,8 @@
 #
 # Contributors:
 # Josh Fernandez, Class of 2024
+# Carson Chan, Class of 2025
+# Oliver Pham, Class of 2025
 # Arman Buyukbozkirli, Class of 2026
 #
 
