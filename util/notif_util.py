@@ -61,7 +61,7 @@ def send_reminders(role_array, signup_title_array):  #Function that formats each
         body = f"The service you have signed up for, {signup_title} - {role.title} is TOMORROW. If there are any conflicts or issues, please reach out to {get_contacts_str()}"
         subject = f"REMINDER: {signup_title}"
         recipient = role.member #Person to recieve message, will be converted to ID later on  
-        cutil.print_reminder(body,subject,recipient)  #Print reminder function is just for testing purposes
+        cutil.send_reminder(body,subject,recipient)  #Print reminder function is just for testing purposes
 
 
 
