@@ -46,7 +46,7 @@ def hourly_job():
     lutil.log("Starting hourly job...")
     
     conf = config_util.get_config()
-
+    
     current_signups = sutil.get_current_signups(conf["signup_genius_token"])
     job_signups = sutil.get_filtered_signups(current_signups,
                                              hours_out=2,
@@ -70,7 +70,6 @@ def daily_job():
     lutil.log("Starting daily job...")
     
     conf = config_util.get_config()
-
     now = datetime.datetime.now()
 
     if now.strftime("%A") == conf["weekly_update_day"]:
@@ -78,7 +77,13 @@ def daily_job():
         weekly_job()
         return
 
+    
     current_signups = sutil.get_current_signups(conf["signup_genius_token"])
+    
+    members,signup_titles = sutil.get_members_to_notify(current_signups)
+    
+    nutil.send_reminders(members, signup_titles)  
+
     job_signups = sutil.get_filtered_signups(current_signups,
                                              days_out=1,
                                              include_full=False,
@@ -130,7 +135,7 @@ def main():
     while True:
         schedule.run_pending()
         time.sleep(60)
-
+  
 
 if __name__ == "__main__":
     try:

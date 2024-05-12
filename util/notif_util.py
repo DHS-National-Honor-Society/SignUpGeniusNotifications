@@ -3,7 +3,6 @@ from util import canvas_util as cutil, \
     config_util
 from datetime import date, timedelta
 
-
 def get_notification_message(input_signup_array,
                              days_out=None,
                              days_from=0,
@@ -43,6 +42,17 @@ def get_notification_message(input_signup_array,
     notif_message = notif_message.replace("\n", "<br>")
 
     return notif_message, len(input_signup_array)
+
+def send_reminders(role_array, signup_title_array):  #Function that formats each role and signup title to be sent to canvas
+
+    for i in range(len(role_array)):  
+        role = role_array[i]
+        signup_title = signup_title_array[i]
+        body = f"The service you have signed up for, {signup_title} - {role.title} is TOMORROW, from {role.start_time} to {role.end_time}. If there are any conflicts or issues, please reach out to..."
+        subject = f"REMINDER: {signup_title}"
+        recipient = role.member #Person to recieve message, will be converted to ID later on  
+        cutil.print_reminder(body,subject,recipient)  #Print reminder function is just for testing purposes
+
 
 
 def send_notification(input_signup_array,
