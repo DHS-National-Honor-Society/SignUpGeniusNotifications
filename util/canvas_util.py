@@ -34,6 +34,8 @@ def send_reminder(body, subject, recipient):  #Function that uses the informatio
 
     r = requests.post(f"{BASE_URL}/conversations", PARAMS)
     return r.json()
+
+
 def print_reminder(body, subject, recipient): #Again, just a test function
     print(subject)
     print(body)
