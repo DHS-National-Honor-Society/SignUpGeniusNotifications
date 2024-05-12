@@ -89,6 +89,8 @@ def daily_job():
                                              include_full=False,
                                              include_ended=False)
     
+
+
     nutil.send_notification(job_signups,
                             conf["default_canvas_course"],
                             days_out=1,
