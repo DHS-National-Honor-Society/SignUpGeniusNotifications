@@ -33,7 +33,7 @@ class SignUp:
             json_object["start_time"],
             json_object["end_time"]
         )
-
+        
         signup.set_roles(roles)
 
         return signup
@@ -87,6 +87,9 @@ class SignUp:
                 roles = [r for r in roles if not r.has_ended()]
 
         return roles
+    
+    
+    
 
     def get_signup_message(self,
                            days_out=None,
@@ -154,18 +157,20 @@ class SignUp:
         
 
 class SignUpRole:
-    def __init__(self, title, needed, start_time, end_time):
+    def __init__(self, title, needed, start_time, end_time, member):
         self.title = title
         self.needed = needed
         self.start_time = start_time
         self.end_time = end_time
+        self.member = member #first and last name of student who filled role
 
     def from_json(json_object):
         return SignUpRole(
             json_object["title"],
             json_object["needed_count"],
             json_object["start_time"],
-            json_object["end_time"]
+            json_object["end_time"],
+            json_object["member"] #added for to and from json
         )
 
     def to_json(self):
@@ -173,7 +178,8 @@ class SignUpRole:
                 "title": self.title,
                 "needed_count": self.needed,
                 "start_time": self.start_time,
-                "end_time": self.end_time
+                "end_time": self.end_time,
+                "member": self.member
             }
     
     def full(self): return self.needed == 0
@@ -181,6 +187,7 @@ class SignUpRole:
     def get_testing_role_string(self):
         return f"Title: {self.title}" + "\n" + \
             f"   Status: {self.needed}" + "\n" + \
+            f"   Members Joined: {self.member}" + "\n" + \
             f"   Time: {self.start_time} - {self.end_time}"
    
     def get_notification_role_string(self):      
@@ -245,6 +252,24 @@ def fix_signupgenius_url(url):
     if not new_url.endswith("#/"): new_url += "#/"
     return new_url
 
+def get_members_to_notify(signups):  #Function with a parameter for an array of signUp objects
+    signup_title_array = []  #just the corresponding signup titles for the roles, for reminder messages
+    role_array = []  #Array of the roles that corresponds to the signup title array, each includes SignUpRole object
+       
+    for signup in signups:
+        roles = signup.roles  
+        for role in roles:
+            if role.member != " " and role.get_days_until() == 1:  #If the signUpRole is NOT blank (meaning it hasnt been filled in) and there is 1 day left
+                lutil.log(f"{role.member} has {role.get_days_until()} day left before participating in {signup.title}.")
+                signup_title_array.append(signup.title)  
+                role_array.append(role)
+    
+    
+    
+    return role_array, signup_title_array
+        
+
+
 
 def get_current_signups(signup_genius_token, with_roles=True, log_file_path="latest.txt") -> [SignUp]:
     signups = []
@@ -286,7 +311,7 @@ def get_current_signups(signup_genius_token, with_roles=True, log_file_path="lat
                 signup_start,
                 signup_end
             )
-
+            
             signups.append(signup)
 
             lutil.log(f"Fetched signup '{signup_title}' with the ID '{signup_id}'", log_file_path)
@@ -302,7 +327,10 @@ def get_current_signups(signup_genius_token, with_roles=True, log_file_path="lat
 
     return signups
 
-        
+
+
+
+
 def get_signup_roles_available(signup_genius_token, signup_id, log_file_path="latest.txt") -> [SignUpRole]:
     roles = []
     
@@ -337,7 +365,7 @@ def get_signup_roles_available(signup_genius_token, signup_id, log_file_path="la
 
     for role_json in roles_to_check:
         role_title = role_json["item"]
-            
+        role_member = role_json["firstname"] + " " + role_json["lastname"]   #again added to the SignUpRole
         role_start = role_json["startdate"]
         role_end = role_json["enddate"]
         # These assignments are flipped from the assignment
@@ -359,7 +387,9 @@ def get_signup_roles_available(signup_genius_token, signup_id, log_file_path="la
             role_title,
             role_json["myqty"], # Gives the amount of people NEEDED
             role_start,
-            role_end
+            role_end, 
+            role_member
+
         ))
 
         lutil.log(f"Added role '{role_title}' for signup {signup_id} starting on {datetime.datetime.fromtimestamp(role_start).strftime('%m/%d/%Y')}", log_file_path)
@@ -421,7 +451,7 @@ def get_signups_to_notify(signup_genius_token,
         if not roles: continue
 
         signups.append(signup)
-
+        
     return signups
 
 

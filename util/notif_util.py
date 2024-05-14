@@ -3,7 +3,6 @@ from util import canvas_util as cutil, \
     config_util
 from datetime import date, timedelta
 
-
 def get_notification_message(input_signup_array,
                              days_out=None,
                              days_from=0,
@@ -25,6 +24,19 @@ def get_notification_message(input_signup_array,
                                                    include_full=include_full,
                                                    include_time_detail=include_when)
 
+    contacts_string = get_contacts_str()
+
+        
+    contact_email = "joshua.fernandez@dexterschools.org"
+    notif_message += "\n<hr>\n" + "Is there anything incorrect with this " + \
+        f"notification? If so, please contact {contacts_string} \n"
+    
+    notif_message = notif_message.replace("\n", "<br>")
+
+    return notif_message, len(input_signup_array)
+
+
+def get_contacts_str() -> str:
     contact_emails = config_util.get_config_item("contacts")
     contacts_string = f"{contact_emails[0][0]} (" + \
         f"<a href='mailto:{contact_emails[0][1]}'>{contact_emails[0][1]}</a>)"
@@ -36,13 +48,21 @@ def get_notification_message(input_signup_array,
         contacts_string += f"{contact_emails[i][0]} (" + \
             f"<a href='mailto:{contact_emails[i][1]}'>{contact_emails[i][1]}</a>)"
         
-    contact_email = "joshua.fernandez@dexterschools.org"
-    notif_message += "\n<hr>\n" + "Is there anything incorrect with this " + \
-        f"notification? If so, please contact {contacts_string} \n"
-    
-    notif_message = notif_message.replace("\n", "<br>")
+    return contacts_string
 
-    return notif_message, len(input_signup_array)
+
+
+
+def send_reminders(role_array, signup_title_array):  #Function that formats each role and signup title to be sent to canvas
+
+    for i in range(len(role_array)):  
+        role = role_array[i]
+        signup_title = signup_title_array[i]
+        body = f"The service you have signed up for, {signup_title} - {role.title} is TOMORROW. If there are any conflicts or issues, please reach out to {get_contacts_str()}"
+        subject = f"REMINDER: {signup_title}"
+        recipient = role.member #Person to recieve message, will be converted to ID later on  
+        cutil.send_reminder(body,subject,recipient)  #Print reminder function is just for testing purposes
+
 
 
 def send_notification(input_signup_array,
