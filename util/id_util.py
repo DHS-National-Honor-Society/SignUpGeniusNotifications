@@ -25,7 +25,7 @@ while len(data) > 0:   #Data has a length of 0 when the page no longer contains 
 
 
 with open("ids.json", "w") as outfile:  #Opens up the ids.json file. Not sure how to create one if there isnt one so we can discuss that
-    json.dump(output, outfile, ensure_ascii=False, indent=4)  #puts the output in the json file, the last 2 args are just for aesthetic purposes in the file
+    outfile.write(json.dumps(output, ensure_ascii=False, indent=4))  #puts the output in the json file, the last 2 args are just for aesthetic purposes in the file
 
 
 
