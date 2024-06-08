@@ -16,7 +16,6 @@ data = req.json()
 while len(data) > 0:   #Data has a length of 0 when the page no longer contains students, so the loop ends after there are no more students to add
     req = r.get("https://dexterschools.instructure.com/api/v1/courses/2539/users", PARAMS) 
     data = req.json() 
-    
     for i in range(len(data)): #For each student in the page
         name = data[i]["name"]
         id = data[i]["id"]
