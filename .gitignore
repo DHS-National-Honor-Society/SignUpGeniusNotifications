@@ -197,7 +197,6 @@ tags
 test/
 logs/
 config.json
-test.py
 google_credentials.json
 token.pickle
 ids.json
