@@ -78,29 +78,28 @@ def daily_job():
         return
 
     
-    current_signups = sutil.get_current_signups(conf["signup_genius_token"])
+    current_signups = sutil.get_filtered_signups(sutil.get_current_signups(conf["signup_genius_token"]),include_ended=False,include_full=True)
     
     members,signup_titles = sutil.get_members_to_notify(current_signups)
     
     nutil.send_reminders(members, signup_titles)  
-
+    
     job_signups = sutil.get_filtered_signups(current_signups,
                                              days_out=1,
                                              include_full=False,
                                              include_ended=False)
     
 
+    # nutil.send_notification(job_signups,
+    #                         conf["default_canvas_course"],
+    #                         days_out=1,
+    #                         include_full=False,
+    #                         include_when=True)
 
-    nutil.send_notification(job_signups,
-                            conf["default_canvas_course"],
-                            days_out=1,
-                            include_full=False,
-                            include_when=True)
-
-    gcutil.add_signups_to_calendar(current_signups)
+    # gcutil.add_signups_to_calendar(current_signups)
 
     lutil.log("Daily job done.")
-
+    
 
 def weekly_job():
     lutil.log("Starting weekly job...")
@@ -122,7 +121,7 @@ def weekly_job():
 
     lutil.log("Weekly job done.")
 
-
+    
 
 def main():
     lutil.log("Starting script...")
