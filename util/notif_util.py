@@ -1,8 +1,9 @@
 from util import canvas_util as cutil, \
     log_util as lutil, \
-    config_util
+    config_util, \
+    SMS_util as sms
 from datetime import date, timedelta
-
+import time
 def get_notification_message(input_signup_array,
                              days_out=None,
                              days_from=0,
@@ -24,7 +25,7 @@ def get_notification_message(input_signup_array,
                                                    include_full=include_full,
                                                    include_time_detail=include_when)
 
-    contacts_string = get_contacts_str()
+    contacts_string = get_contacts_str("email")
 
         
     contact_email = "joshua.fernandez@dexterschools.org"
@@ -36,10 +37,14 @@ def get_notification_message(input_signup_array,
     return notif_message, len(input_signup_array)
 
 
-def get_contacts_str() -> str:
+def get_contacts_str(type: str) -> str:
     contact_emails = config_util.get_config_item("contacts")
-    contacts_string = f"{contact_emails[0][0]} (" + \
+    if type == "email":
+        contacts_string = f"{contact_emails[0][0]} (" + \
         f"<a href='mailto:{contact_emails[0][1]}'>{contact_emails[0][1]}</a>)"
+    elif type == "text":
+        contacts_string = f"{contact_emails[0][0]} (" + \
+        f"{contact_emails[0][1]})"
     for i in range(1, len(contact_emails)):
         if len(contact_emails) > 2: contacts_string += ", "
 
@@ -54,16 +59,18 @@ def get_contacts_str() -> str:
 
 
 def send_reminders(role_array, signup_title_array):  #Function that formats each role and signup title to be sent to canvas
-
-    for i in range(len(role_array)):  
+   
+    for i in range(1):  
         role = role_array[i]
         signup_title = signup_title_array[i]
-        body = f"The service you have signed up for, {signup_title} - {role.title} is TOMORROW. If there are any conflicts or issues, please reach out to {get_contacts_str()}"
+        recipient = role.member
+        contacts = get_contacts_str("text")
+        body = f"Dear {recipient}, \n The service you have signed up for, {signup_title} - {role.title} is TOMORROW."
         subject = f"REMINDER: {signup_title}"
-        recipient = role.member #Person to recieve message, will be converted to ID later on  
+         #Person to recieve message, will be converted to ID later on  
         cutil.send_reminder(body,subject,recipient)  #Print reminder function is just for testing purposes
-
-
+        # sms.sendSMSreminder(body,recipient)
+        time.sleep(1)
 
 def send_notification(input_signup_array,
                       canvas_course_id,
@@ -100,7 +107,7 @@ def send_notification(input_signup_array,
             f" Update for SignUps ({current_date_str})"
     notif_message = notif_title + "<br>" + notif_message
     cutil.send_announcement(canvas_course_id, notif_title, notif_message)
-
+    
     lutil.log(f"{notif_status[0]} Update ({notif_status[1]}) sent.")
 
 
