@@ -7,7 +7,6 @@ def main():
             "page":1, 
             "enrollment_type[]":["student","ta"] #Includes only students and TA's, not observers or teachers.
             }
-
     output = [] 
 
     req = r.get("https://dexterschools.instructure.com/api/v1/courses/2539/users", PARAMS)
@@ -25,6 +24,7 @@ def main():
 
     with open("ids.json", "w") as outfile:  #Opens up the ids.json file. Not sure how to create one if there isnt one so we can discuss that
         outfile.write(json.dumps(output, ensure_ascii=False, indent=4))  #puts the output in the json file, the last 2 args are just for aesthetic purposes in the file
+        
 
 if __name__ == "__main__":
     main()

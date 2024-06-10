@@ -197,9 +197,9 @@ tags
 test/
 logs/
 config.json
-test.py
 google_credentials.json
 token.pickle
 ids.json
 phones.csv
 student_numbers.json
+
