@@ -90,13 +90,13 @@ def daily_job():
                                              include_ended=False)
     
 
-    # nutil.send_notification(job_signups,
-    #                         conf["default_canvas_course"],
-    #                         days_out=1,
-    #                         include_full=False,
-    #                         include_when=True)
+    nutil.send_notification(job_signups,
+                            conf["default_canvas_course"],
+                            days_out=1,
+                            include_full=False,
+                            include_when=True)
 
-    # gcutil.add_signups_to_calendar(current_signups)
+    gcutil.add_signups_to_calendar(current_signups)
 
     lutil.log("Daily job done.")
     

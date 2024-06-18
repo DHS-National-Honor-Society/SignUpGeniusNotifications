@@ -45,13 +45,13 @@ def get_contacts_str(type: str) -> str:
     elif type == "text":
         contacts_string = f"{contact_emails[0][0]} (" + \
         f"{contact_emails[0][1]})"
-    for i in range(1, len(contact_emails)):
-        if len(contact_emails) > 2: contacts_string += ", "
+        for i in range(1, len(contact_emails)):
+            if len(contact_emails) > 2: contacts_string += ", "
 
-        if(i == len(contact_emails) - 1): contacts_string += "or "
+            if(i == len(contact_emails) - 1): contacts_string += "or "
 
-        contacts_string += f"{contact_emails[i][0]} (" + \
-            f"<a href='mailto:{contact_emails[i][1]}'>{contact_emails[i][1]}</a>)"
+            contacts_string += f"{contact_emails[i][0]} (" + \
+                f"<a href='mailto:{contact_emails[i][1]}'>{contact_emails[i][1]}</a>)"
         
     return contacts_string
 
@@ -65,15 +65,13 @@ def send_reminders(role_array, signup_title_array):  #Function that formats each
         signup_title = signup_title_array[i]
         recipient = role.member
         contacts = get_contacts_str("text")
-        body = f"Dear {recipient}, \n The service you have signed up for, {signup_title} - {role.title} is TOMORROW."
         start_time_string = role.get_time_object().strftime("%-I:%M %p")
         end_time_string = role.get_end_time_object().strftime("%-I:%M %p")
         total_time_string = f"from {start_time_string} to {end_time_string}."
-        body = f"The service you have signed up for, {signup_title} - {role.title} is TOMORROW, {total_time_string}. If there are any conflicts or issues, please reach out to {get_contacts_str()}"
+        body = f"Dear {recipient}, \n The service you have signed up for, {signup_title} - {role.title} is TOMORROW, {total_time_string}"
         subject = f"REMINDER: {signup_title}"
-         #Person to recieve message, will be converted to ID later on  
-        cutil.send_reminder(body,subject,recipient)  #Print reminder function is just for testing purposes
-        # sms.sendSMSreminder(body,recipient)
+        cutil.send_reminder(body,subject,recipient)
+        sms.sendSMSreminder(body,recipient)
         time.sleep(1)
 
 def send_notification(input_signup_array,
