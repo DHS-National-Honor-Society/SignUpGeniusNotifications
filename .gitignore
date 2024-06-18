@@ -199,7 +199,7 @@ logs/
 config.json
 test.py
 google_credentials.json
+sheet_credentials.json
+sheet_token.json
 token.pickle
 ids.json
-phones.csv
-student_numbers.json
