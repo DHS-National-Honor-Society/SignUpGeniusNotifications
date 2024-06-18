@@ -1,5 +1,5 @@
 import requests as r
-import config_util as cutil, \
+from util import config_util as cutil, \
 log_util as lutil
 
 import os.path
