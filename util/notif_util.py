@@ -60,12 +60,16 @@ def get_contacts_str(type: str) -> str:
 
 def send_reminders(role_array, signup_title_array):  #Function that formats each role and signup title to be sent to canvas
    
-    for i in range(1):  
+    for i in range(len(role_array)):  
         role = role_array[i]
         signup_title = signup_title_array[i]
         recipient = role.member
         contacts = get_contacts_str("text")
         body = f"Dear {recipient}, \n The service you have signed up for, {signup_title} - {role.title} is TOMORROW."
+        start_time_string = role.get_time_object().strftime("%-I:%M %p")
+        end_time_string = role.get_end_time_object().strftime("%-I:%M %p")
+        total_time_string = f"from {start_time_string} to {end_time_string}."
+        body = f"The service you have signed up for, {signup_title} - {role.title} is TOMORROW, {total_time_string}. If there are any conflicts or issues, please reach out to {get_contacts_str()}"
         subject = f"REMINDER: {signup_title}"
          #Person to recieve message, will be converted to ID later on  
         cutil.send_reminder(body,subject,recipient)  #Print reminder function is just for testing purposes
