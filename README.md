@@ -12,6 +12,8 @@ A connection between SignupGenius and Canvas LMS to send updates to a certain co
   "weekly_update_day": "str; The day of the week that the weekly update will send on, in the format '%A' (ex. Monday, Tuesday, ...)",
   "request_retries": "int; The amount of retry attempts for the SG API calls",
   "contacts": "[[str]]; The contacts for the notification string, formatted [['NAME', 'EMAIL'], ...]",
-  "google_calendar_id": "str; The Calendar ID of the Google Calendar to be updated"
+  "google_calendar_id": "str; The Calendar ID of the Google Calendar to be updated",
+  "textbelt_id": "str; Your key for the textbelt API in order to send text messages",
+  "sheet_id": "str; The ID of the Google spreadsheet to be read"
 }
 ```
