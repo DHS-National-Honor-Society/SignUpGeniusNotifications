@@ -198,8 +198,7 @@ test/
 logs/
 config.json
 google_credentials.json
+sheet_credentials.json
+sheet_token.json
 token.pickle
 ids.json
-phones.csv
-student_numbers.json
-
