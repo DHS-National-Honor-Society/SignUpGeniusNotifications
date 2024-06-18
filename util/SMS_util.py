@@ -62,13 +62,22 @@ def getPhoneArray() -> List[List[str]]:
 
 
 def sendSMSreminder(body, recipient):
-    phoneNum = getPhone(recipient)
-    response = r.post("https://textbelt.com/text", {
+  phoneNum = getPhone(recipient)
+  if len(phoneNum) == 0:
+    lutil.log(f"Error: No phone number available, skipping SMS for {recipient}")
+    return
+    
+  response = r.post("https://textbelt.com/text", {
     "phone":phoneNum[0],
     "message":body,
     "key": cutil.get_config_item("textbelt_key")
   })
-    lutil.log(response.json())
+  data = response.json()
+  if data["success"] == True:
+    quota = data["quotaRemaining"]
+    lutil.log(f"Successfully sent a message to {recipient}. There are {quota} messages left before the next billing!")
+
+
 
 
 def getPhone(name: str):
