@@ -23,6 +23,8 @@ def send_announcement(course_id, title, message, is_published=True):
 
 def send_reminder(body, subject, recipient):  #Function that uses the information from notif util and sends it out
     token = config_util.get_config_item("canvas_token")
+    if get_id(recipient) == None:  
+        return f"Unable to find ID for {recipient}, skipping user."
 
     PARAMS = {
         "subject": subject,
@@ -53,4 +55,4 @@ def get_id(student: str):
     for i in range(len(ids)): #For each dictionary 
         if (ids[i]["name"] == student):
             return ids[i]["id"]
-    return -1 #If there is no name that corresponds, sends -1
+    return None #If there is no name that corresponds, sends None
