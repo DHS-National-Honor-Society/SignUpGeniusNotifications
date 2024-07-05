@@ -18,6 +18,10 @@ class SignUp:
 
         self.roles = []
 
+
+    def __str__(self):
+        return f"SignUp title: {self.title} \n SignUp creater: {self.author} \n SignUp Roles: {self.roles}"
+
     def get_url_id(self):
         return self.url.split("https://www.signupgenius.com/go/")[1]
 
@@ -164,6 +168,10 @@ class SignUpRole:
         self.end_time = end_time
         self.member = member #first and last name of student who filled role
 
+    def __str__(self):
+        return f"Role title: {self.title} \n Role start time: {self.start_time} \n Role end time: {self.end_time} \n Role volunteer: {self.member}"
+    
+
     def from_json(json_object):
         return SignUpRole(
             json_object["title"],
@@ -271,7 +279,7 @@ def get_members_to_notify(signups):  #Function with a parameter for an array of 
 
 
 
-def get_current_signups(signup_genius_token, with_roles=True, log_file_path="latest.txt") -> [SignUp]:
+def get_current_signups(signup_genius_token, with_roles=True, log_file_path="latest.txt") -> list[SignUp]:
     signups = []
     
 
@@ -331,7 +339,7 @@ def get_current_signups(signup_genius_token, with_roles=True, log_file_path="lat
 
 
 
-def get_signup_roles_available(signup_genius_token, signup_id, log_file_path="latest.txt") -> [SignUpRole]:
+def get_signup_roles_available(signup_genius_token, signup_id, log_file_path="latest.txt") -> list[SignUpRole]:
     roles = []
     
     params = {
@@ -435,7 +443,7 @@ def get_signups_to_notify(signup_genius_token,
                           hours_from=0,
                           include_full=True,
                           include_ended=True,
-                          log_file_path="latest.txt") -> [SignUp]:
+                          log_file_path="latest.txt") -> list[SignUp]:
     if not days_out and not hours_out:
         return None
 
@@ -455,7 +463,7 @@ def get_signups_to_notify(signup_genius_token,
     return signups
 
 
-def get_filtered_signups(signups: [SignUp],
+def get_filtered_signups(signups: list[SignUp],
                          days_out=None,
                          days_from=0,
                          hours_out=None,
