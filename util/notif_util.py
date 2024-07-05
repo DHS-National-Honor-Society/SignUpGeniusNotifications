@@ -1,7 +1,8 @@
 from util import canvas_util as cutil, \
     log_util as lutil, \
     config_util, \
-    SMS_util as sms
+    SMS_util as sms, \
+    id_util as ids
 from datetime import date, timedelta
 import time
 def get_notification_message(input_signup_array,
@@ -59,7 +60,8 @@ def get_contacts_str(type: str) -> str:
 
 
 def send_reminders(role_array, signup_title_array):  #Function that formats each role and signup title to be sent to canvas
-   
+    students = ids.get_student_array()
+    
     for i in range(len(role_array)):  
         role = role_array[i]
         signup_title = signup_title_array[i]
@@ -70,7 +72,7 @@ def send_reminders(role_array, signup_title_array):  #Function that formats each
         total_time_string = f"from {start_time_string} to {end_time_string}."
         body = f"Dear {recipient}, \n The service you have signed up for, {signup_title} - {role.title} is TOMORROW, {total_time_string}"
         subject = f"REMINDER: {signup_title}"
-        cutil.send_reminder(body,subject,recipient)
+        cutil.send_reminder(body,subject,recipient,students)
         sms.sendSMSreminder(body,recipient)
         time.sleep(1)
 
