@@ -1,13 +1,29 @@
 import requests as r
-import config_util as cutil
+from util import config_util as cutil, \
+log_util as lutil
 import json
-def main():
+
+class Student:
+    def __init__(self, name: str, id: int):
+        self.name = name
+        self.id = id
+
+    def get_id(self):
+        return self.id
+    
+    def get_name(self):
+        return self.name
+
+
+def get_student_array():
+    lutil.log("Beginning fetch for students and TA's...")
+
     PARAMS = {"access_token": cutil.get_config_item("canvas_token"),  
             "per_page":99, #I had to paginate the API because there are a lot of students in the NHS course
             "page":1, 
             "enrollment_type[]":["student","ta"] #Includes only students and TA's, not observers or teachers.
             }
-    output = [] 
+    students = [] 
 
     req = r.get("https://dexterschools.instructure.com/api/v1/courses/2539/users", PARAMS)
     data = req.json()
@@ -16,19 +32,10 @@ def main():
         req = r.get("https://dexterschools.instructure.com/api/v1/courses/2539/users", PARAMS) 
         data = req.json() 
         for i in range(len(data)): #For each student in the page
-            name = data[i]["name"]
-            id = data[i]["id"]
-            output.append(dict(name=data[i]["name"],id=data[i]["id"]))  #Adds the dictionary
+            students.append(Student(data[i]["name"],data[i]["id"])) #Adds the dictionary
         PARAMS["page"] += 1 #next page
-
-
-    with open("ids.json", "w") as outfile:  #Opens up the ids.json file. Not sure how to create one if there isnt one so we can discuss that
-        outfile.write(json.dumps(output, ensure_ascii=False, indent=4))  #puts the output in the json file, the last 2 args are just for aesthetic purposes in the file
-        
-
-if __name__ == "__main__":
-    main()
-
+    lutil.log(f"Successfully obtained {len(students)} students and TA's and their Canvas ID's.")
+    return students
 
 
 
