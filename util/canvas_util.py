@@ -1,6 +1,6 @@
 import requests
-import json
-from util import config_util
+from util import config_util, \
+log_util as lutil
 
 BASE_URL = "https://dexterschools.instructure.com/api/v1"
 
@@ -21,20 +21,25 @@ def send_announcement(course_id, title, message, is_published=True):
     r = requests.post(f"{BASE_URL}/courses/{course_id}/discussion_topics", PARAMS)
     return r.json()
 
-def send_reminder(body, subject, recipient):  #Function that uses the information from notif util and sends it out
+def send_reminder(body, subject, recipient, students):  #Function that uses the information from notif util and sends it out
+    lutil.log("Attempting to send reminder...")
     token = config_util.get_config_item("canvas_token")
-    if get_id(recipient) == None:  
-        return f"Unable to find ID for {recipient}, skipping user."
+
+    student_id = get_id(students, recipient)
+    if student_id == None:  
+        lutil.log(f"Unable to send message.")
+        return
 
     PARAMS = {
         "subject": subject,
         "access_token": token,
         "body": body,
-        "recipients": get_id(recipient),
+        "recipients": student_id,
         "force_new": True  #Creates a new conversation every time (Just to make sure it will always notify)
     }
 
     r = requests.post(f"{BASE_URL}/conversations", PARAMS)
+    lutil.log(f"Successfully sent a canvas message to {recipient}")
     return r.json()
 
 
@@ -43,16 +48,11 @@ def print_reminder(body, subject, recipient): #Again, just a test function
     print(body)
     print(recipient)
 
- #This function is finds a corresponding name in the json file and returns their canvas ID, since that's how messages get 
- #sent in Canvas. The JSON file was made by my own script I created, which I will put into the utilities folder. 
-
-def get_id(student: str): 
-
-    with open("ids.json") as f:  #JSON file name is ids for ID's
-        ids = json.load(f)
-        f.close()
-
-    for i in range(len(ids)): #For each dictionary 
-        if (ids[i]["name"] == student):
-            return ids[i]["id"]
+def get_id(students, name: str): 
+    lutil.log(f"Beginning search for {name}'s Canvas ID")
+    for student in students: #For each dictionary 
+        if (student.name == name):
+            lutil.log(f"Successfully obtained the ID: {student.id}")
+            return student.id 
+    lutil.log("Unable to locate ID for this user, skipping...")
     return None #If there is no name that corresponds, sends None
