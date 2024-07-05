@@ -67,7 +67,7 @@ def timestamp_to_mdy_str(timestamp):
     return datetime.datetime.fromtimestamp(timestamp).strftime("%m/%d/%Y")
 
 
-def add_signups_to_calendar(signups: [SignUp], current_events: [Event]=None):
+def add_signups_to_calendar(signups: list[SignUp], current_events: list[Event]=None):
     if not current_events:
         current_events = get_notification_calendar_events()
 
@@ -75,7 +75,7 @@ def add_signups_to_calendar(signups: [SignUp], current_events: [Event]=None):
         add_signup_to_calendar(signup, current_events)
     
 
-def add_signup_to_calendar(signup: SignUp, current_events: [Event]=None):
+def add_signup_to_calendar(signup: SignUp, current_events: list[Event]=None):
     if not current_events:
         current_events = get_notification_calendar_events()
 
