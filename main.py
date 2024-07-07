@@ -112,6 +112,10 @@ def weekly_job():
                                              include_full=False,
                                              include_ended=False)
     
+    members,signup_titles = sutil.get_members_to_notify(current_signups)
+
+    nutil.send_reminders(members, signup_titles)  
+
     nutil.send_weekly_notification(job_signups,
                                    conf["default_canvas_course"],
                                    include_full=False,
