@@ -82,6 +82,9 @@ def sendSMSreminder(body, recipient):
 
 def getPhone(name: str):
   phones = getPhoneArray()
-  
-  return [i[2] for i in phones if f"{i[0]} {i[1]}".lower() == name.lower()]
+  student_number = [i[2] for i in phones if f"{i[0]} {i[1]}".lower() == name.lower()]
+  if (cutil.get_config_item("developer_mode")):
+    return f"Student phone number: {student_number}"
+  else: 
+    return student_number
   

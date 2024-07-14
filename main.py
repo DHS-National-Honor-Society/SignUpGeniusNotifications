@@ -40,8 +40,8 @@ import json
 import datetime
 
 current_signups = []
-
-
+developer_mode = config_util.get_config_item("developer_mode")
+lutil.log(f"------------DEVELOPER MODE: {developer_mode}-----------")
 def hourly_job():
     lutil.log("Starting hourly job...")
     
@@ -55,7 +55,7 @@ def hourly_job():
                                              include_ended=False)
     
     nutil.send_notification(job_signups,
-                            conf["default_canvas_course"],
+                            canvas_course_id=cutil.get_notification_course_id(),
                             hours_out=2,
                             hours_from=1,
                             include_full=False,

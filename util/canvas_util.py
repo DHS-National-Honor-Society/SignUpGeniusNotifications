@@ -5,7 +5,10 @@ log_util as lutil
 BASE_URL = "https://dexterschools.instructure.com/api/v1"
 
 def get_notification_course_id():
-    return config_util.get_config_item("default_canvas_course")
+    if config_util.get_config_item("developer_mode"):
+        return config_util.get_config_item("testing_canvas_course")
+    else:
+        return config_util.get_config_item("default_canvas_course")
 
 def send_announcement(course_id, title, message, is_published=True):
     token = config_util.get_config_item("canvas_token")
@@ -43,10 +46,10 @@ def send_reminder(body, subject, recipient, students):  #Function that uses the 
     return r.json()
 
 
-def print_reminder(body, subject, recipient): #Again, just a test function
-    print(subject)
-    print(body)
-    print(recipient)
+def print_reminder(body, subject, recipient, students): #Again, just a test function
+    student_id = get_id(students, recipient)
+    
+    return f"Subject: {subject} \n Body: {body} \n Recipient: {recipient} \n Recipients Canvas ID: {student_id}"
 
 def get_id(students, name: str): 
     lutil.log(f"Beginning search for {name}'s Canvas ID")
