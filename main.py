@@ -91,7 +91,7 @@ def daily_job():
     
 
     nutil.send_notification(job_signups,
-                            conf["default_canvas_course"],
+                            canvas_course_id=cutil.get_notification_course_id(),
                             days_out=1,
                             include_full=False,
                             include_when=True)
@@ -117,7 +117,7 @@ def weekly_job():
     nutil.send_reminders(members, signup_titles)  
 
     nutil.send_weekly_notification(job_signups,
-                                   conf["default_canvas_course"],
+                                   canvas_course_id=cutil.get_notification_course_id(),
                                    include_full=False,
                                    include_when=False) # No need to say "in the next 7 days"
 
