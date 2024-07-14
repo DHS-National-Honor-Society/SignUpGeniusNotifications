@@ -40,10 +40,8 @@ def get_notification_message(input_signup_array,
 
 def get_contacts_str(type: str) -> str:
     contact_emails = config_util.get_config_item("contacts")
+
     if type == "email":
-        contacts_string = f"{contact_emails[0][0]} (" + \
-        f"<a href='mailto:{contact_emails[0][1]}'>{contact_emails[0][1]}</a>)"
-    elif type == "text":
         contacts_string = f"{contact_emails[0][0]} (" + \
         f"{contact_emails[0][1]})"
         for i in range(1, len(contact_emails)):
@@ -53,6 +51,17 @@ def get_contacts_str(type: str) -> str:
 
             contacts_string += f"{contact_emails[i][0]} (" + \
                 f"<a href='mailto:{contact_emails[i][1]}'>{contact_emails[i][1]}</a>)"
+
+    elif type == "text":
+        contacts_string = f"{contact_emails[0][0]} (" + \
+        f"{contact_emails[0][1]})"
+        for i in range(1, len(contact_emails)):
+            if len(contact_emails) > 2: contacts_string += ", "
+
+            if(i == len(contact_emails) - 1): contacts_string += "or "
+
+            contacts_string += f"{contact_emails[i][0]} (" + \
+                f"{contact_emails[i][1]})"
         
     return contacts_string
 
@@ -72,7 +81,7 @@ def send_reminders(role_array, signup_title_array):  #Function that formats each
         start_time_string = role.get_time_object().strftime("%I:%M %p")
         end_time_string = role.get_end_time_object().strftime("%I:%M %p")
         total_time_string = f"from {start_time_string} to {end_time_string}."
-        body = f"Dear {recipient}, \n The service you have signed up for, {signup_title} - {role.title} is TOMORROW, {total_time_string}"
+        body = f"Dear {recipient}, \n The service you have signed up for, {signup_title} - {role.title} is TOMORROW, {total_time_string}. If there are any conflicts or questions, please reach out to {contacts}"
         subject = f"REMINDER: {signup_title}"
         if (is_developer):
             lutil.log(cutil.print_reminder(body,subject,recipient,students))
