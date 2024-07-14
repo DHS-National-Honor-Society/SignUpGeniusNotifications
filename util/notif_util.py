@@ -60,6 +60,8 @@ def get_contacts_str(type: str) -> str:
 
 
 def send_reminders(role_array, signup_title_array):  #Function that formats each role and signup title to be sent to canvas
+    is_developer = config_util.get_config_item("developer_mode")
+    
     students = ids.get_student_array()
     
     for i in range(len(role_array)):  
@@ -67,13 +69,17 @@ def send_reminders(role_array, signup_title_array):  #Function that formats each
         signup_title = signup_title_array[i]
         recipient = role.member
         contacts = get_contacts_str("text")
-        start_time_string = role.get_time_object().strftime("%-I:%M %p")
-        end_time_string = role.get_end_time_object().strftime("%-I:%M %p")
+        start_time_string = role.get_time_object().strftime("%I:%M %p")
+        end_time_string = role.get_end_time_object().strftime("%I:%M %p")
         total_time_string = f"from {start_time_string} to {end_time_string}."
         body = f"Dear {recipient}, \n The service you have signed up for, {signup_title} - {role.title} is TOMORROW, {total_time_string}"
         subject = f"REMINDER: {signup_title}"
-        cutil.send_reminder(body,subject,recipient,students)
-        sms.sendSMSreminder(body,recipient)
+        if (is_developer):
+            lutil.log(cutil.print_reminder(body,subject,recipient,students))
+            lutil.log(sms.getPhone(recipient))
+        else:
+            cutil.send_reminder(body,subject,recipient,students)
+            sms.sendSMSreminder(body,recipient)
         time.sleep(1)
 
 def send_notification(input_signup_array,
