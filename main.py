@@ -78,9 +78,14 @@ def daily_job():
         return
 
     
-    current_signups = sutil.get_filtered_signups(sutil.get_current_signups(conf["signup_genius_token"]),include_ended=False,include_full=True)
+    current_signups = sutil.get_current_signups(conf["signup_genius_token"])
+    if current_signups == None:
+        lutil.log("No current signups fetched, skipping daily.")
+        return 
     
-    members,signup_titles = sutil.get_members_to_notify(current_signups)
+    reminder_signups = sutil.get_filtered_signups(current_signups,days_out=1,include_ended=False,include_full=True)
+    
+    members,signup_titles = sutil.get_members_to_notify(reminder_signups)
     
     nutil.send_reminders(members, signup_titles)  
     

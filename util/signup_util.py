@@ -328,7 +328,12 @@ def get_current_signups(signup_genius_token, with_roles=True, log_file_path="lat
 
     if with_roles:
         for signup in signups:
-            signup.set_roles(get_signup_roles_available(signup_genius_token, signup.id, log_file_path))
+            signup_roles = get_signup_roles_available(signup_genius_token, signup.id, log_file_path)
+            if signup_roles == None:
+                lutil.log("get_signup_roles_available failed, skipping.")
+                return None
+            else:
+                signup.set_roles(signup_roles)
 
             lutil.log(f"Set roles for signup '{signup.title}'", log_file_path)
 
@@ -336,6 +341,12 @@ def get_current_signups(signup_genius_token, with_roles=True, log_file_path="lat
     return signups
 
 
+def server_error(json_resp,status):
+    if json_resp == {"message":["Too many report request for the same sign up. Please try again later."],"data":{},"success":False} or status == 500:
+        lutil.log(json_resp)
+        lutil.log(status)
+        return True
+    return False
 
 
 
@@ -352,8 +363,11 @@ def get_signup_roles_available(signup_genius_token, signup_id, log_file_path="la
     roles_json, roles_status_code = try_json_request(roles_request_url, params, log_file_path)
     filled_roles_json, filled_roles_status_code = try_json_request(filled_roles_request_url, params, log_file_path)
 
+    if server_error(roles_json,roles_status_code) or server_error(filled_role_json,filled_roles_status_code):
+        lutil.log("Failed to obtain signup_roles, server error.")
+        return None
     roles_to_check = []
-
+    
     if roles_json != None:
         roles_array = roles_json["data"]["signup"]
         for role_json in roles_array: roles_to_check.append(role_json)
