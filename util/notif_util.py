@@ -66,6 +66,26 @@ def get_contacts_str(type: str) -> str:
     return contacts_string
 
 
+def send_recycle_reminders(recycle_roles):
+    is_developer = config_util.get_config_item("developer_mode")
+
+    students = ids.get_student_array()
+
+    for role in recycle_roles:
+        role_title = role.title
+        recipient = role.member
+        contacts = get_contacts_str("text")
+        body = f"Have you brought in the {role_title} bin yet? NHS requires you to return your bin before you recieve your hours. Questions? Please reach out to Elijah Smith."
+        subject = f"RETURN Recycle Bin"
+
+        if (is_developer):
+            lutil.log(cutil.print_reminder(body,subject,recipient,students))
+            lutil.log(sms.getPhone(recipient))
+        else:
+            cutil.send_reminder(body,subject,recipient,students)
+            sms.sendSMSreminder(body,recipient)
+        time.sleep(1)
+
 
 
 def send_reminders(role_array, signup_title_array):  #Function that formats each role and signup title to be sent to canvas

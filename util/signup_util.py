@@ -6,6 +6,7 @@ import re
 import math
 
 
+
 class SignUp:
     def __init__(self, url, id, title, author, general_start_time, general_end_time):
         self.url = url
@@ -169,7 +170,7 @@ class SignUpRole:
         self.member = member #first and last name of student who filled role
 
     def __str__(self):
-        return f"Role title: {self.title} \n Role start time: {self.start_time} \n Role end time: {self.end_time} \n Role volunteer: {self.member}"
+        return f"Role title: {self.title} \n Role start time: {get_date_object_without_time(self.get_time_object())} \n Role end time: {get_date_object_without_time(self.get_time_object())} \n Role volunteer: {self.member}"
     
 
     def from_json(json_object):
@@ -216,8 +217,8 @@ class SignUpRole:
                 notification_string += f" on <b>{self.get_time_object().strftime('%A')}</b> ({mdy})"
             
             if self.end_time != 0:
-                start_time_string = self.get_time_object().strftime("%-I:%M %p")
-                end_time_string = self.get_end_time_object().strftime("%-I:%M %p")
+                start_time_string = self.get_time_object().strftime("%I:%M %p")
+                end_time_string = self.get_end_time_object().strftime("%I:%M %p")
                 notification_string += f" from {start_time_string} to {end_time_string}"
                         
         return notification_string
@@ -349,6 +350,25 @@ def server_error(json_resp,status):
     return False
 
 
+def get_recycling_roles(current_signups):
+    recycle_signups = []
+
+    for signup in current_signups:
+        if "recycl" in signup.title.lower():
+            recycle_signups.append(signup)
+    
+    recycling_roles = []
+    
+    for signup in recycle_signups:
+        roles = signup.get_roles()
+        for role in roles:
+            if (get_date_object_without_time(role.get_time_object()) - get_date_object_without_time(datetime.datetime.now() + datetime.timedelta(days=1))).days == 0:
+                if role.member != " ":                
+                    recycling_roles.append(role)
+                    lutil.log(f"Obtained {role.title} bin role from {signup.title}")
+    return recycling_roles
+
+        
 
 def get_signup_roles_available(signup_genius_token, signup_id, log_file_path="latest.txt") -> list[SignUpRole]:
     roles = []
@@ -363,7 +383,7 @@ def get_signup_roles_available(signup_genius_token, signup_id, log_file_path="la
     roles_json, roles_status_code = try_json_request(roles_request_url, params, log_file_path)
     filled_roles_json, filled_roles_status_code = try_json_request(filled_roles_request_url, params, log_file_path)
 
-    if server_error(roles_json,roles_status_code) or server_error(filled_role_json,filled_roles_status_code):
+    if server_error(roles_json,roles_status_code):
         lutil.log("Failed to obtain signup_roles, server error.")
         return None
     roles_to_check = []
