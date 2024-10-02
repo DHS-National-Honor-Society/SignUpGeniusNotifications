@@ -362,7 +362,7 @@ def get_recycling_roles(current_signups):
     for signup in recycle_signups:
         roles = signup.get_roles()
         for role in roles:
-            if (get_date_object_without_time(role.get_time_object()) - get_date_object_without_time(datetime.datetime.now() + datetime.timedelta(days=1))).days == 0:
+            if (get_date_object_without_time(role.get_time_object()) - (get_date_object_without_time(datetime.datetime.now() + datetime.timedelta(days=-1)))).days == 0:
                 if role.member != " ":                
                     recycling_roles.append(role)
                     lutil.log(f"Obtained {role.title} bin role from {signup.title}")
