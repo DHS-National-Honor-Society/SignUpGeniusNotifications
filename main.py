@@ -82,14 +82,12 @@ def daily_job():
     if current_signups == None:
         lutil.log("No current signups fetched, skipping daily.")
         return 
-    recycling_roles = sutil.get_recycling_roles(current_signups)
 
     
     reminder_signups = sutil.get_filtered_signups(current_signups,days_out=1,include_ended=False,include_full=True)
     
     members,signup_titles = sutil.get_members_to_notify(reminder_signups)
     
-    nutil.send_recycle_reminders(recycling_roles)
     
     nutil.send_reminders(members, signup_titles)  
     
